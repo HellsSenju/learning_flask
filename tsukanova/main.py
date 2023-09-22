@@ -36,7 +36,9 @@ def diapason():
     to_column = int(values['to_column'])
     print('to_column'+ values['to_column'])
     
-    outputData = data.iloc[from_line: to_line, from_column: to_column].to_html(classes='table-sm table align-middle table-bordered')
+    outputData = data.iloc[from_line: to_line, from_column: to_column].to_html(
+        classes='table-sm table align-middle table-bordered',
+        justify='center')
 
     if from_line > to_line | from_column > to_column | to_line > line_count | to_column > column_count:
         return '''<center><h1>Введен некорректный диапазон</h1></center>''' + render_template("home.html")
