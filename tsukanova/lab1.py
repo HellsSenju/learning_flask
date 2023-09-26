@@ -8,10 +8,11 @@ app = Flask(__name__)
 def home():
     return render_template("home.html")
 
+
 @app.route('/diapason', methods=['GET'])
 def diapason():
     values = request.args
-    data = pd.read_csv('jio_mart_items.csv', sep=',')
+    data = pd.read_csv('jio_mart_items_noEmpty.csv', sep=',')
     description = 'В наборе данных хранить информации о продуктах JIO'\
         'С помощью этих данных можно проанализировать, какие категории товаров содержать наиболее дорогие (дешевые) товары,' \
         'а так же категории с наибольшим(наименьшим) количеством продукции'   
@@ -26,12 +27,12 @@ def diapason():
     fill_count = data.count()
     
     
-    from_line = int(values['from_line'])
+    from_line = int(values['from_line']) - 1
     print('from_line' + values['from_line'])
     to_line = int(values['to_line'])
     print('to_line'+ values['to_line'])
     
-    from_column = int(values['from_column'])
+    from_column = int(values['from_column']) - 1
     print('from_column'+ values['from_column'])
     to_column = int(values['to_column'])
     print('to_column'+ values['to_column'])
@@ -56,7 +57,5 @@ def diapason():
                         "</div></div>"
 
 
-
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
-
