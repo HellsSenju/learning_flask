@@ -29,6 +29,11 @@ def home():
     <div class="container mt-4">
           <div class="card">
                 <h1 class="text-center"> {task} </h1>
+                <br>
+                <h5 class="text-center">
+                По проанализированным данным можно сделать вывод, что самая дешевая категория - продовольственные довары,
+                самая дорогая категория - электроника
+                </h5>
                 <div class='container mt-4'>
                     <div class='table align-middle table-bordered'>
                         {category}
@@ -42,6 +47,12 @@ def home():
     <div class="container mt-4">
           <div class="card">
                 <h1 class="text-center"> {task} </h1>
+                <br>
+                <h5 class="text-center">
+                По проанализированным данным можно сделать вывод, что 
+                самая дешевая подкатегория - {min},
+                самая дорогая подкатегория - {max}
+                </h5>
                 <div class="container mt-4">
                     <div class="table align-middle table-bordered">
                         {sub_category}
@@ -65,10 +76,14 @@ def home():
     """""
 
     category = data.groupby(['category']).agg({'price': ['min', 'max', 'mean']}).reset_index()
-    category.columns = ['Категории:', 'Минимальная цена: ', 'Максимальная цена: ', 'Средняя цена: ']
+    category.columns = ['Категории', 'Минимальная цена', 'Максимальная цена', 'Средняя цена']
+
 
     sub_category = data.groupby(['sub_category']).agg({'price': ['min', 'max', 'mean']}).reset_index()
-    sub_category.columns = ['Подкатегории:', 'Минимальная цена: ', 'Максимальная цена: ', 'Средняя цена: ']
+    sub_category.columns = ['Подкатегории', 'Минимальная цена', 'Максимальная цена', 'Средняя цена']
+    sub_category_max = sub_category.loc[sub_category['Средняя цена'].idxmax()]
+    sub_category_min = sub_category.loc[sub_category['Средняя цена'].idxmin()]  
+    
     
     one_kg = data[data['items'].str.contains("1 kg") == True].agg({'price': ['min', 'max', 'mean']}).reset_index()
     one_kg.columns = ['Критерий:', 'Результат:']
@@ -78,7 +93,9 @@ def home():
         classes='table-sm table align-middle table-bordered',justify='center')) \
         + html_task1.format(task=task1, category=category.to_html(
         classes='table-sm table align-middle table-bordered',justify='center')) \
-        + html_task2.format(task=task2, sub_category=sub_category.to_html(
+        + html_task2.format(task=task2,min=sub_category_min['Подкатегории'], 
+                            max=sub_category_max['Подкатегории'], 
+                            sub_category=sub_category.to_html(
         classes='table-sm table align-middle table-bordered',justify='center'))
 
 
