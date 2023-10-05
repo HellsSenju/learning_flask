@@ -1,24 +1,18 @@
 from flask import Flask, render_template
 import pandas as pd
 from pretty_html_table import build_table
-import numpy as np
 
 app = Flask(__name__)
 data = pd.read_csv('jio_mart_items.csv')
+data.dropna(inplace=True)
+data.drop_duplicates(inplace = True)
+    
 
-category = data.groupby(['category']).agg({'price': ['min', 'max', 'mean']}).reset_index()
-print(category.max().reset_index())
-
-# print(data[ data['category'] == 'Groceries']['items'].head())
-
-
-# category = data.groupby(['category']).agg({'price': ['min', 'max', 'mean']})
-# sub_category = data.groupby(['sub_category']).agg({'price': ['min', 'max', 'mean']})
-# max.rename(columns={'price' : 'max'}, inplace = True)
-# print(category)
-# print(sub_category)
-# print(category.axes[0])
-# print(category.axes[0].values) # закинуть в шаблон
+# print(data.agg({'price': ['max']}))
+# print(data['price'].max())
+#одно макс или мин или средн:
+# print(data.loc[data['price'].idxmax()])
+#data.describe()
 
 description = 'В наборе данных хранить информации о продуктах JIO'
 
@@ -29,23 +23,64 @@ task3 = 'Минимальная, максимальная, средняя цен
 
 @app.route('/')
 def home():
-    data.dropna(inplace=True)
+    
+    
+    html_task1 = """"" 
+    <div class="container mt-4">
+          <div class="card">
+                <h1 class="text-center"> {task} </h1>
+                <div class='container mt-4'>
+                    <div class='table align-middle table-bordered'>
+                        {category}
+                    </div>
+                </div>
+          </div>
+        </div>
+    """""
+    
+    html_task2 = """""
+    <div class="container mt-4">
+          <div class="card">
+                <h1 class="text-center"> {task} </h1>
+                <div class="container mt-4">
+                    <div class="table align-middle table-bordered">
+                        {sub_category}
+                    </div>
+                </div>
+          </div>
+        </div>
+    """""
+    
+    html_task3 = """""
+    <div class="container mt-4">
+          <div class="card">
+                <h1 class="text-center"> {task} </h1>
+                <div class="container mt-4">
+                    <div class="table align-middle table-bordered">
+                        {one_kg}
+                    </div>
+                </div>
+          </div>
+        </div>
+    """""
 
     category = data.groupby(['category']).agg({'price': ['min', 'max', 'mean']}).reset_index()
     category.columns = ['Категории:', 'Минимальная цена: ', 'Максимальная цена: ', 'Средняя цена: ']
-    max_category = data['']
 
     sub_category = data.groupby(['sub_category']).agg({'price': ['min', 'max', 'mean']}).reset_index()
     sub_category.columns = ['Подкатегории:', 'Минимальная цена: ', 'Максимальная цена: ', 'Средняя цена: ']
+    
+    one_kg = data[data['items'].str.contains("1 kg") == True].agg({'price': ['min', 'max', 'mean']}).reset_index()
+    one_kg.columns = ['Критерий:', 'Результат:']
+    
+    return render_template("lab2.html") \
+        + html_task3.format(task=task3, one_kg=one_kg.to_html(
+        classes='table-sm table align-middle table-bordered',justify='center')) \
+        + html_task1.format(task=task1, category=category.to_html(
+        classes='table-sm table align-middle table-bordered',justify='center')) \
+        + html_task2.format(task=task2, sub_category=sub_category.to_html(
+        classes='table-sm table align-middle table-bordered',justify='center'))
 
-    cat_table = build_table(category, 'red_light')
-    sub_cat_table = build_table(sub_category, 'red_light')
-
-    return '<h1 style="text-align: center; padding-top: 15px; font-size: 45px">' + description + '</h1><br>' \
-    + '<h1 style="text-align: center; padding: 0.5%; font-size: 25px">' + task1 + '</h1>' \
-    + '<div align="center">' + cat_table + '</div>' \
-    + '<h1 style="text-align: center; padding: 0.5%; font-size: 25px">' + task2 + '</h1>' \
-    + '<div align="center">' + sub_cat_table + '</div>'
 
 
 if __name__ == '__main__':
