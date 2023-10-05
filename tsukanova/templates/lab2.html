@@ -8,16 +8,15 @@
                 crossorigin="anonymous"></script>
     </head>
     <body>
-        <div style="text-align: center; ">
-             <form action='http://127.0.0.1:5000/diapason' method="GET">
-                <h1>Выберите диапазон строк:</h1>
-                <input type="number" size=10 name="from_line" min=0 value=1>
-                <input type="number" size=10 name="to_line" min=0 value=10>
-                <h1>Выберите диапазон стобцов:</h1>
-                <input type="number" size=10 name="from_column" min=0 value=1>
-                <input type="number" size=10 name="to_column" min=0 value=5>
-                <input type="submit" value="OK">
-            </form>
+        <div class="container mt-4">
+          <div class="card">
+                <h1 class="text-center"> {{ task1 }} </h1>
+                <div class='container mt-4'>
+                    <div align='center' class='table table-bordered'>
+                        {{ category }}
+                    </div>
+                </div>
+          </div>
         </div>
     </body>
 </html>
