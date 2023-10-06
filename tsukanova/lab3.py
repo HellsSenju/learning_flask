@@ -24,63 +24,65 @@ def new_csv():
     data = pd.read_csv('jio_mart_items.csv')
     # drop(data)
 
-    max_price = data['price'].max()
-    min_price = data['price'].min()
+    category = data['category'].value_counts().index[0]
+    sub_category = data['sub_category'].value_counts().index[0]
+    href = data['href'].value_counts().index[0]
+    items = data['items'].value_counts().index[0]
+
     for i in range(data.shape[0], round(data.shape[0] * 1.1) + 1, 1):
-        new_category = data['category'].value_counts().index[0]
-        new_sub_category = data['sub_category'].value_counts().index[0]
-        new_href = data['href'].value_counts().index[0]
-        new_items = data['items'].value_counts().index[0]
-
+        max_price = data['price'].max()
+        min_price = data['price'].min()
         avg = data['price'].mean()  # ср знач по столбцу price
-        new_price = avg + random.uniform(-avg, max_price - avg)
+        new_price = round(avg + random.uniform(min_price - avg, max_price - avg), 1)
 
-        new_row = [new_category, new_sub_category, new_href, new_items, new_price]
+        new_row = [category, sub_category, href, items, new_price]
         data.loc[i] = new_row
 
     data.to_csv('updated.csv')
 
 
-new_csv()
+# new_csv()
 
-# @app.route('/')
-# def home():
-#     data = pd.read_csv('jio_mart_items.csv')
-#     data.dropna(inplace=True)
-#     data.drop_duplicates(inplace=True)
-#
-#     max_price = data['price'].max()
-#     min_price = data['price'].min()
-#     for i in range(data.shape[0], round(data.shape[0] * 1.1) + 1, 1):
-#         new_category = data['category'].value_counts().index[0]
-#         new_sub_category = data['sub_category'].value_counts().index[0]
-#         new_href = data['href'].value_counts().index[0]
-#         new_items = data['items'].value_counts().index[0]
-#
-#         avg = data['price'].mean()  # ср знач по столбцу price
-#         new_price = avg + random.uniform(-avg, max_price - avg)
-#
-#         new_row = [new_category, new_sub_category, new_href, new_items, new_price]
-#         data.loc[i] = new_row
-#
-#     html = """""
-#     <div class="container mt-4">
-#           <div class="card">
-#                 <h1 class="text-center"> {task} </h1>
-#                 <div class="container mt-4">
-#                     <div class="table align-middle table-bordered">
-#                         {table}
-#                     </div>
-#                 </div>
-#           </div>
-#     </div>
-#     """""
-#
-#     return render_template("base.html") \
-#         + html.format(task="Расширенный датасет", table=data.to_html(
-#             classes='table-sm table align-middle table-bordered',
-#             justify='center'))
-#
-#
-# if __name__ == '__main__':
-#     app.run(debug=True, threaded=True)
+
+@app.route('/')
+def home():
+    data = pd.read_csv('updated.csv')
+    data.dropna(inplace=True)
+    data.drop_duplicates(inplace=True)
+
+    html = """""
+    <div class="container mt-4">
+          <div class="card">
+                <h1 class="text-center"> {task} </h1>
+                <br>
+                <h3 class="text-center"> Было строк данных - {old} </h3>
+                <h3 class="text-center"> Стало строк данных - {new} </h3>
+                <br>
+                <div class="container mt-4">
+                    <div class="table align-middle table-bordered">
+                        {table_head}
+                    </div>
+                </div>
+                <div class="container mt-4">
+                    <div class="table align-middle table-bordered">
+                        {table_tail}
+                    </div>
+                </div>
+          </div>
+    </div>
+    """""
+
+    return render_template("base.html") \
+        + html.format(task="Расширенный датасет",
+                      old=pd.read_csv('jio_mart_items.csv').shape[0],
+                      new=pd.read_csv('updated.csv').shape[0],
+                      table_head=data.head(5).to_html(
+                        classes='table-sm table align-middle table-bordered',
+                        justify='center'),
+                      table_tail=data.tail(5).to_html(
+                        classes='table-sm table align-middle table-bordered',
+                        justify='center'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True, threaded=True)
