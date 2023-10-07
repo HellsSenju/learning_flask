@@ -7,12 +7,6 @@ data = pd.read_csv('jio_mart_items.csv')
 data.dropna(inplace=True)
 data.drop_duplicates(inplace=True)
 
-# print(data.agg({'price': ['max']}))
-# print(data['price'].max())
-# одно макс или мин или средн:
-# print(data.loc[data['price'].idxmax()])
-# data.describe()
-
 description = 'В наборе данных хранить информации о продуктах JIO'
 
 task1 = 'Минимальная, максимальная, средняя цена в разрезе категорий'

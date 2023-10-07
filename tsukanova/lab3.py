@@ -2,8 +2,29 @@ from flask import Flask, render_template
 import pandas as pd
 import random
 from pandas import DataFrame
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
+
+
+def plot():
+    data = pd.read_csv('jio_mart_items.csv')
+    data.dropna(inplace=True)
+    data.drop_duplicates(inplace=True)
+
+    d = data.groupby('category').agg(price=('price', 'mean')).reset_index()
+    d['price'] = d['price'].apply(lambda x: round(x, 1))
+    plt.xlabel('Категории')
+    plt.ylabel('Средняя цена')
+    # print(d)
+    # print(d.index)
+    # print(d.values)
+    barplot = plt.bar(x=d['category'], height=d['price'])
+    plt.bar_label(barplot, labels=d['price'])
+    plt.show()
+
+
+# plot()
 
 
 def drop(data: DataFrame):
@@ -38,8 +59,7 @@ def new_csv():
         new_row = [category, sub_category, href, items, new_price]
         data.loc[i] = new_row
 
-    data.to_csv('updated.csv')
-
+    data.to_csv('updated.csv', index=False)
 
 # new_csv()
 
