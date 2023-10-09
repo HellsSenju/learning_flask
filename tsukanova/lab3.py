@@ -12,19 +12,27 @@ def plot():
     data.dropna(inplace=True)
     data.drop_duplicates(inplace=True)
 
-    d = data.groupby('category').agg(price=('price', 'mean')).reset_index()
-    d['price'] = d['price'].apply(lambda x: round(x, 1))
-    plt.xlabel('Категории')
-    plt.ylabel('Средняя цена')
+    d['1'] = data[data['']]
+    # print(d.head())
+    # plt.xlabel('Категории')
+    # plt.ylabel('Средняя цена')
+    plt.boxplot(x=d['category'])
+
+    # d = data.groupby('category').agg(price=('price', 'mean')).reset_index()
+    # d['price'] = d['price'].apply(lambda x: round(x, 1))
+    # d.plot(kind='box', title='ewewewe')
+    # plt.boxplot(data['price'])
+    # plt.xlabel('Категории')
+    # plt.ylabel('Средняя цена')
     # print(d)
     # print(d.index)
     # print(d.values)
-    barplot = plt.bar(x=d['category'], height=d['price'])
-    plt.bar_label(barplot, labels=d['price'])
+    # barplot = plt.bar(x=d['category'], height=d['price'])
+    # plt.bar_label(barplot, labels=d['price'])
     plt.show()
 
 
-# plot()
+plot()
 
 
 def drop(data: DataFrame):
@@ -64,45 +72,45 @@ def new_csv():
 # new_csv()
 
 
-@app.route('/')
-def home():
-    data = pd.read_csv('updated.csv')
-    data.dropna(inplace=True)
-    data.drop_duplicates(inplace=True)
-
-    html = """""
-    <div class="container mt-4">
-          <div class="card">
-                <h1 class="text-center"> {task} </h1>
-                <br>
-                <h3 class="text-center"> Было строк данных - {old} </h3>
-                <h3 class="text-center"> Стало строк данных - {new} </h3>
-                <br>
-                <div class="container mt-4">
-                    <div class="table align-middle table-bordered">
-                        {table_head}
-                    </div>
-                </div>
-                <div class="container mt-4">
-                    <div class="table align-middle table-bordered">
-                        {table_tail}
-                    </div>
-                </div>
-          </div>
-    </div>
-    """""
-
-    return render_template("base.html") \
-        + html.format(task="Расширенный датасет",
-                      old=pd.read_csv('jio_mart_items.csv').shape[0],
-                      new=pd.read_csv('updated.csv').shape[0],
-                      table_head=data.head(5).to_html(
-                        classes='table-sm table align-middle table-bordered',
-                        justify='center'),
-                      table_tail=data.tail(5).to_html(
-                        classes='table-sm table align-middle table-bordered',
-                        justify='center'))
-
-
-if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+# @app.route('/')
+# def home():
+#     data = pd.read_csv('updated.csv')
+#     data.dropna(inplace=True)
+#     data.drop_duplicates(inplace=True)
+#
+#     html = """""
+#     <div class="container mt-4">
+#           <div class="card">
+#                 <h1 class="text-center"> {task} </h1>
+#                 <br>
+#                 <h3 class="text-center"> Было строк данных - {old} </h3>
+#                 <h3 class="text-center"> Стало строк данных - {new} </h3>
+#                 <br>
+#                 <div class="container mt-4">
+#                     <div class="table align-middle table-bordered">
+#                         {table_head}
+#                     </div>
+#                 </div>
+#                 <div class="container mt-4">
+#                     <div class="table align-middle table-bordered">
+#                         {table_tail}
+#                     </div>
+#                 </div>
+#           </div>
+#     </div>
+#     """""
+#
+#     return render_template("base.html") \
+#         + html.format(task="Расширенный датасет",
+#                       old=pd.read_csv('jio_mart_items.csv').shape[0],
+#                       new=pd.read_csv('updated.csv').shape[0],
+#                       table_head=data.head(5).to_html(
+#                         classes='table-sm table align-middle table-bordered',
+#                         justify='center'),
+#                       table_tail=data.tail(5).to_html(
+#                         classes='table-sm table align-middle table-bordered',
+#                         justify='center'))
+#
+#
+# if __name__ == '__main__':
+#     app.run(debug=True, threaded=True)
