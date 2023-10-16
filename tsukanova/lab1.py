@@ -26,7 +26,6 @@ def diapason():
     #заполненные
     fill_count = data.count()
     
-    
     from_line = int(values['from_line']) - 1
     print('from_line' + values['from_line'])
     to_line = int(values['to_line'])
@@ -45,12 +44,12 @@ def diapason():
         return '''<center><h1>Введен некорректный диапазон</h1></center>''' + render_template("home.html")
     else:
         return render_template('view_data.html', 
-                    column_info= column_info,
-                    line_count = line_count,
-                    column_count = column_count,
-                    empty_count = empty_count,
-                    fill_count = fill_count,
-                    description = description
+                    column_info=column_info,
+                    line_count=line_count,
+                    column_count=column_count,
+                    empty_count=empty_count,
+                    fill_count=fill_count,
+                    description=description
                     ) \
                         + "<div class='container mt-4'><div align='center' class='table table-bordered'>" \
                         + outputData + \
