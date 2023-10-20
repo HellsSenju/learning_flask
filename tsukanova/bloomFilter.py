@@ -24,7 +24,7 @@ class BloomFilter(object):
         for x in s:
             res += ord(x) * (a ** mult)
             mult += 1
-        return sum % self.size
+        return res % self.size
 
     def _hash(self, item, k):
         return self.hash_function(str(k) + item)
