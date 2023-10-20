@@ -3,7 +3,7 @@ from bitarray import bitarray
 
 
 class BloomFilter(object):
-    def __init__(self, size, number_expected_elements=100):
+    def __init__(self, size=200, number_expected_elements=100):
         self.size = size
         self.number_expected_elements = number_expected_elements
         self.filter = bitarray(self.size)
@@ -17,8 +17,17 @@ class BloomFilter(object):
             hash = ((hash << 5) + hash) + ord(x)
         return hash % self.size
 
-    def _hash(self, item, K):
-        return self._hash_djb2(str(K) + item)
+    def hash_function(self, s):
+        a = 53  # так как латинский алфавит + большие и маленькие буквы
+        res = 0
+        mult = 1
+        for x in s:
+            res += ord(x) * (a ** mult)
+            mult += 1
+        return sum % self.size
+
+    def _hash(self, item, k):
+        return self.hash_function(str(k) + item)
 
     def add_to_filter(self, item):
         for i in range(self.number_hash_functions):
