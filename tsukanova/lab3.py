@@ -1,13 +1,14 @@
 from flask import Flask, render_template
 import pandas as pd
 import random
+import numpy as np
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
 
-def plot():
+def bar_plot():
     data = pd.read_csv('jio_mart_items.csv')
     data.dropna(inplace=True)
     data.drop_duplicates(inplace=True)
@@ -24,7 +25,32 @@ def plot():
     plt.show()
 
 
-# plot()
+def scatter_plot():
+    data = pd.read_csv('jio_mart_items.csv')
+    data.dropna(inplace=True)
+    data.drop_duplicates(inplace=True)
+
+    # d = DataFrame({'category': data['category'], 'price': data['price']})
+    # categories = data['category'].drop_duplicates().reset_index().index.values
+    color = ['lightcoral', 'darkorange', 'olive', 'teal', 'violet', 'skyblue']
+    categories = data['category'].drop_duplicates().values
+    print(categories)
+    # plt.scatter(data['category'], data['price'], c=categories)
+
+    for i in range(len(categories)):
+        # print(data[data['category'] == categories[i]]['category'])
+        x = data[data['category'] == categories[i]]['category']
+        y = data[data['category'] == categories[i]]['price']
+        plt.scatter(x, y, c=color[i])
+
+    ax = plt.gca()
+    ax.yaxis.set_major_locator(plt.MultipleLocator(100000))
+
+    plt.ylim(0, 4000000)
+    plt.show()
+
+
+# bar_plot()
 
 
 def drop(data: DataFrame):
@@ -104,5 +130,5 @@ def home():
                         justify='center'))
 
 
-if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+# if __name__ == '__main__':
+#     app.run(debug=True, threaded=True)
