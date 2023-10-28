@@ -4,65 +4,40 @@ import random
 import numpy as np
 from pandas import DataFrame
 import matplotlib.pyplot as plt
+from sklearn import preprocessing
 
 app = Flask(__name__)
 
 
-def bar_plot():
+def scatter_plot():
     data = pd.read_csv('jio_mart_items.csv')
     data.dropna(inplace=True)
     data.drop_duplicates(inplace=True)
 
-    d = data.groupby('category').agg(price=('price', 'mean')).reset_index()
-    d['price'] = d['price'].apply(lambda x: round(x, 1))
-    plt.xlabel('Категории')
-    plt.ylabel('Средняя цена')
-    # print(d)
-    # print(d.index)
-    # print(d.values)
-    barplot = plt.bar(x=d['category'], height=d['price'])
-    plt.bar_label(barplot, labels=d['price'])
+    price = preprocessing.normalize([np.asarray(data['price'])])
+    data['price'] = pd.DataFrame(price[0])
+    data = data.astype({'price': str})
+    # d = DataFrame({'category': data['category'], 'price': data['price']})
+    # categories = data['category'].drop_duplicates().reset_index().index.values
+    color = ['lightcoral', 'darkorange', 'olive', 'teal', 'violet', 'skyblue']
+    categories = data['category'].drop_duplicates().values
+    print(categories)
+    # plt.scatter(data['category'], data['price'], c=categories)
+
+    for i in range(len(categories)):
+        # print(data[data['category'] == categories[i]]['category'])
+        x = data[data['category'] == categories[i]]['category']
+        y = data[data['category'] == categories[i]]['price']
+        plt.scatter(x, y, c=color[i])
+
+    # ax = plt.gca()
+    # ax.yaxis.set_major_locator(plt.MultipleLocator(0.005))
+
+    plt.ylim(0, 10)
     plt.show()
 
 
-# bar_plot()
-
-
-def drop(data: DataFrame):
-    data.dropna(inplace=True)
-    data.drop_duplicates(inplace=True)
-
-    data.set_index('category', inplace=True)
-    print(data.shape[0])
-    data.drop(['Groceries'], axis=0, inplace=True)
-    # data.drop(['Home & Kitchen'], axis=0, inplace = True)
-    data.drop(['Fashion'], axis=0, inplace=True)
-    data.drop(['Beauty'], axis=0, inplace=True)
-    data.to_csv('updated.csv')
-    print(data.shape[0])
-
-
-def new_csv():
-    data = pd.read_csv('jio_mart_items.csv')
-    # drop(data)
-
-    category = data['category'].value_counts().index[0]
-    sub_category = data['sub_category'].value_counts().index[0]
-    href = data['href'].value_counts().index[0]
-    items = data['items'].value_counts().index[0]
-
-    for i in range(data.shape[0], round(data.shape[0] * 1.1) + 1, 1):
-        max_price = data['price'].max()
-        min_price = data['price'].min()
-        avg = data['price'].mean()  # ср знач по столбцу price
-        new_price = round(avg + random.uniform(min_price - avg, max_price - avg), 1)
-
-        new_row = [category, sub_category, href, items, new_price]
-        data.loc[i] = new_row
-
-    data.to_csv('updated.csv', index=False)
-
-# new_csv()
+scatter_plot()
 
 
 @app.route('/')
