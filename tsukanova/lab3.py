@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 
 def bar_plot():
-    data = pd.read_csv('jio_mart_items.csv')
+    data = pd.read_csv('csv_files/jio_mart_items.csv')
     data.dropna(inplace=True)
     data.drop_duplicates(inplace=True)
 
@@ -38,12 +38,12 @@ def drop(data: DataFrame):
     # data.drop(['Home & Kitchen'], axis=0, inplace = True)
     data.drop(['Fashion'], axis=0, inplace=True)
     data.drop(['Beauty'], axis=0, inplace=True)
-    data.to_csv('updated.csv')
+    data.to_csv('csv_files/updated.csv')
     print(data.shape[0])
 
 
 def new_csv():
-    data = pd.read_csv('jio_mart_items.csv')
+    data = pd.read_csv('csv_files/jio_mart_items.csv')
     # drop(data)
 
     category = data['category'].value_counts().index[0]
@@ -67,7 +67,7 @@ def new_csv():
 
 @app.route('/')
 def home():
-    data = pd.read_csv('updated.csv')
+    data = pd.read_csv('csv_files/updated.csv')
     data.dropna(inplace=True)
     data.drop_duplicates(inplace=True)
 
@@ -95,8 +95,8 @@ def home():
 
     return render_template("base.html") \
         + html.format(task="Расширенный датасет",
-                      old=pd.read_csv('jio_mart_items.csv').shape[0],
-                      new=pd.read_csv('updated.csv').shape[0],
+                      old=pd.read_csv('csv_files/jio_mart_items.csv').shape[0],
+                      new=pd.read_csv('csv_files/updated.csv').shape[0],
                       table_head=data.head(5).to_html(
                         classes='table-sm table align-middle table-bordered',
                         justify='center'),

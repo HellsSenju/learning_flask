@@ -12,7 +12,7 @@ def home():
 @app.route('/diapason', methods=['GET'])
 def diapason():
     values = request.args
-    data = pd.read_csv('jio_mart_items.csv', sep=',')
+    data = pd.read_csv('csv_files/jio_mart_items.csv', sep=',')
     description = 'В наборе данных хранить информации о продуктах JIO'\
         'С помощью этих данных можно проанализировать, какие категории товаров содержать наиболее дорогие (дешевые) товары,' \
         'а так же категории с наибольшим(наименьшим) количеством продукции'   

@@ -3,7 +3,7 @@ import pandas as pd
 
 app = Flask(__name__)
 # data = pd.read_csv('updated.csv')
-data = pd.read_csv('jio_mart_items.csv')
+data = pd.read_csv('csv_files/csv_normalize.csv')
 data.dropna(inplace=True)
 data.drop_duplicates(inplace=True)
 
