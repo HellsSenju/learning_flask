@@ -2,68 +2,55 @@ from flask import Flask, render_template
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn import preprocessing, feature_extraction
+from statsmodels.regression.linear_model import OLS
+import statsmodels.api as sm
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.preprocessing import OneHotEncoder
 
 app = Flask(__name__)
 
 #  Зависимость цены от категории
+# Home & Kitchen    60329
+# Groceries         46043
+# Fashion           26087
+# Electronics       19018
+# Beauty            10733
+# Jewellery            70
 
 
-def task():
+def encoding():
     data = pd.read_csv('csv_files/jio_mart_items.csv', sep=',')
     data.dropna(inplace=True)
 
-    encoder = OneHotEncoder()
-    encoder.fit([data['category']])
-
-    # Преобразование категориальных признаков
-    encoded_category = encoder.transform([data['category']])
-    print(encoded_category)
-
-    enc = DictVectorizer()
-    price_dict = data[['category']].to_dict('records')
-    price = enc.fit_transform(price_dict)
-    # print(price)
+    data['category_mean_price'] = data['category'].map(data.groupby('category')['price'].mean().round())
+    data.to_csv('csv_files/csv_encoded.csv', index=False)
 
 
+# encoding()
 
-task()
 
-
-def csv_normalize_and_standardize():
-    data = pd.read_csv('csv_files/jio_mart_items.csv', sep=',')
+def linear_regression():
+    data = pd.read_csv('csv_files/csv_encoded.csv', sep=',')
     data.dropna(inplace=True)
+    lr: pd.DataFrame
+    # X - независимая переменная
+    x = data['category_mean_price']
+    # lr['X'] = data['category_mean_price']
 
-    price = data[['price']]
-    data['price'] = (price - price.mean())/price.std()  # std - стандартное отклонение выборки
+    # Y - зависимая переменная
+    y = data['price']
+    # lr['Y'] = data['price']
 
-    vect = feature_extraction.text.TfidfVectorizer
+    # добавление константы b_0
+    x = sm.add_constant(x, prepend=False)
 
-    # price = preprocessing.normalize([np.asarray(data['price'])])
-    # data['price'] = pd.DataFrame(price[0])
-    # data.dropna(inplace=True)
-    # data.to_csv('csv_files/csv_normalize_and_standardize.csv', index=False)
-
-
-# csv_normalize_and_standardize()
-
-
-def csv_normalize_min_max_scalar():
-    data = pd.read_csv('csv_files/jio_mart_items.csv', sep=',')
-    data.dropna(inplace=True)
-
-    min_max_scalar = preprocessing.MinMaxScaler()
-    d_price = data['price'].astype(int)
-    price = preprocessing.scale([data['price']])
-    print(price)
-
-    # data['price'] = price
-    # data.dropna(inplace=True)
-    # data.to_csv('min_max_scalar.csv', index=False)
+    model = OLS(y, x)
+    # вычисление наилучшей регрессионной линии
+    res = model.fit()
+    print(res.summary())
 
 
-# csv_normalize_min_max_scalar()
+linear_regression()
 
 
 def scatter_plot():
