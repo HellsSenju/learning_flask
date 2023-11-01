@@ -1,128 +1,127 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn import preprocessing, feature_extraction
-from statsmodels.regression.linear_model import OLS
-import statsmodels.api as sm
-from sklearn.feature_extraction import DictVectorizer
-from sklearn.preprocessing import OneHotEncoder
+import numpy as np
+from io import BytesIO
+import base64
+from sklearn.linear_model import LinearRegression
 
 app = Flask(__name__)
 
 #  Зависимость цены от категории
-# Home & Kitchen    60329
-# Groceries         46043
-# Fashion           26087
-# Electronics       19018
-# Beauty            10733
-# Jewellery            70
+dictionary_mean = {
+    774.667474: 'Beauty',
+    10515.385267: 'Electronics',
+    698.287078: 'Fashion',
+    538.170048: 'Groceries',
+    1181.128744: 'Home & Kitchen',
+    9395.857143: 'Jewellery'
+}
+
+dictionary_count = {
+    60329: 'Home & Kitchen',
+    46043: 'Groceries',
+    26087: 'Fashion',
+    19018: 'Electronics',
+    10733: 'Beauty',
+    70: 'Jewellery'
+}
+
+data = pd.read_csv('csv_files/csv_encoded.csv', sep=',')
+data.dropna(inplace=True)
+
+# print(data['category'].value_counts())
+
+x = data['category_count_price']
+y = data['price']
+
+xy = x * y
+xx = x * x
+sumX = x.sum()
+sumY = y.sum()
+sumXY = xy.sum()
+sumXX = xx.sum()
+n = data.shape[0]
+b1 = (sumXY - (sumY * sumX) / n) / (sumXX - sumX * sumX / n)
+b0 = (sumY - b1 * sumX) / n
 
 
 def encoding():
-    data = pd.read_csv('csv_files/jio_mart_items.csv', sep=',')
-    data.dropna(inplace=True)
+    df = pd.read_csv('csv_files/jio_mart_items.csv', sep=',')
+    df.dropna(inplace=True)
 
-    data['category_mean_price'] = data['category'].map(data.groupby('category')['price'].mean().round())
-    data.to_csv('csv_files/csv_encoded.csv', index=False)
+    df['category_mean_price'] = df['category'].map(df.groupby('category')['price'].mean().round())
+    df['category_count_price'] = df['category_mean_price']
+
+    df['category_count_price'].where(~(df['category'] == 'Home & Kitchen'), other=60329, inplace=True)
+    df['category_count_price'].where(~(df['category'] == 'Jewellery'), other=70, inplace=True)
+    df['category_count_price'].where(~(df['category'] == 'Groceries'), other=46043, inplace=True)
+    df['category_count_price'].where(~(df['category'] == 'Fashion'), other=26087, inplace=True)
+    df['category_count_price'].where(~(df['category'] == 'Electronics'), other=19018, inplace=True)
+    df['category_count_price'].where(~(df['category'] == 'Beauty'), other=10733, inplace=True)
+
+    df.to_csv('csv_files/csv_encoded.csv', index=False)
 
 
 # encoding()
 
 
-def linear_regression():
-    data = pd.read_csv('csv_files/csv_encoded.csv', sep=',')
-    data.dropna(inplace=True)
-    lr: pd.DataFrame
-    # X - независимая переменная
-    x = data['category_mean_price']
-    # lr['X'] = data['category_mean_price']
+def linear_regression_2():
+    x_ = np.array(data['category_mean_price']).reshape((-1, 1))
+    y_ = data['price']
+    model = LinearRegression()
+    model.fit(x_, y_)
 
-    # Y - зависимая переменная
-    y = data['price']
-    # lr['Y'] = data['price']
-
-    # добавление константы b_0
-    x = sm.add_constant(x, prepend=False)
-
-    model = OLS(y, x)
-    # вычисление наилучшей регрессионной линии
-    res = model.fit()
-    print(res.summary())
-
-
-linear_regression()
-
-
-def scatter_plot():
-    data = pd.read_csv('csv_files/csv_normalize_and_standardize.csv')
-
-    # d = DataFrame({'category': data['category'], 'price': data['price']})
-    # categories = data['category'].drop_duplicates().reset_index().index.values
-
-    color = ['lightcoral', 'darkorange', 'olive', 'teal', 'violet', 'skyblue']
-    categories = data['category'].drop_duplicates().values
-
-    # print(categories)
-    # plt.scatter(data['category'], data['price'], c=categories)
-
-    for i in range(len(categories)):
-        # print(data[data['category'] == categories[i]]['category'])
-        x = data[data['category'] == categories[i]]['category']
-        y = data[data['category'] == categories[i]]['price']
-        print(x)
-        print(y)
-        plt.scatter(x, y, c=color[i])
-
-    # ax = plt.gca()
-    # ax.yaxis.set_major_locator(plt.MultipleLocator(0.01))
-
-    plt.ylim(-1, 1)
-    # plt.ticklabel_format(style='plain')
-    plt.show()
-
-
-# scatter_plot()
+    y_pred = model.predict([[9395.857143]])
+    # y_pred = model.intercept_ + model.coef_ * x
+    # print(model.intercept_)
+    # print(model.coef_)
+    print('predicted response:', y_pred, sep='\n')
 
 
 @app.route('/')
 def home():
-    data = pd.read_csv('csv_files/updated.csv')
-    data.dropna(inplace=True)
-    data.drop_duplicates(inplace=True)
-
-    html = """""
-    <div class="container mt-4">
-          <div class="card">
-                <h1 class="text-center"> {task} </h1>
-                <br>
-                <h3 class="text-center"> Было строк данных - {old} </h3>
-                <h3 class="text-center"> Стало строк данных - {new} </h3>
-                <br>
-                <div class="container mt-4">
-                    <div class="table align-middle table-bordered">
-                        {table_head}
-                    </div>
-                </div>
-                <div class="container mt-4">
-                    <div class="table align-middle table-bordered">
-                        {table_tail}
-                    </div>
-                </div>
-          </div>
-    </div>
-    """""
-
-    return render_template("base.html") \
-        + html.format(task="Расширенный датасет",
-                      old=pd.read_csv('csv_files/jio_mart_items.csv').shape[0],
-                      new=pd.read_csv('csv_files/updated.csv').shape[0],
-                      table_head=data.head(5).to_html(
-                        classes='table-sm table align-middle table-bordered',
-                        justify='center'),
-                      table_tail=data.tail(5).to_html(
-                        classes='table-sm table align-middle table-bordered',
-                        justify='center'))
+    return render_template("lab5_home.html")
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True, threaded=True)
+@app.route('/linear_regression', methods=['GET'])
+def linear_regression():
+    value = int(request.args['select_category'])
+    y_pred = b0 + b1 * value
+    # print('predicted response1:', y_pred, sep='\n')
+    return render_template("lab5_lr.html",
+                           category=dictionary_count[value],
+                           price=y_pred)
+
+
+@app.route('/scatter_plot', methods=['GET'])
+def scatter_plot():
+    plt.scatter(x.iloc[:round(n * 0.99)], y.iloc[:round(n * 0.99)], color='g')
+    y_pred = b0 + b1 * x
+    plt.title('99% данных')
+    plt.plot(x.iloc[:round(n * 0.99)], y_pred.iloc[:round(n * 0.99)], color='b')
+    # plt.savefig('./plots/99proc.png')
+
+    # создание временного файла
+    tmpfile = BytesIO()
+    plt.savefig(tmpfile, format='png')
+    plt.clf()
+    encoded1 = base64.b64encode(tmpfile.getvalue()).decode('utf-8')  # кодирование
+
+    plt.scatter(x.iloc[round(n * 0.99):], y.iloc[round(n * 0.99):], color='g')
+    y_pred = b0 + b1 * x
+    plt.title('1% данных')
+    plt.plot(x.iloc[round(n * 0.99):], y_pred.iloc[round(n * 0.99):], color='b')
+    # plt.savefig('./plots/1proc.png')
+
+    # создание временного файла
+    plt.savefig(tmpfile, format='png')
+    plt.clf()
+    encoded2 = base64.b64encode(tmpfile.getvalue()).decode('utf-8')  # кодирование
+    return render_template('lab5_plot.html',
+                           encoded1=encoded1,
+                           encoded2=encoded2)
+
+
+if __name__ == '__main__':
+    app.run(debug=True, threaded=True)
