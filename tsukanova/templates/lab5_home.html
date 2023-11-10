@@ -2,42 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
-              rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
-              crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
-                crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"
+          rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x"
+          crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4"
+            crossorigin="anonymous"></script>
     <title>Lab 5</title>
 </head>
 <body>
-  <div style="text-align: center" class="container text-center mt-4 align-items-center justify-content-center">
+<div style="text-align: center" class="container text-center mt-4 align-items-center justify-content-center">
 
-    <form style="text-align: center; align-items: center; justify-content: center;" action='/linear_regression' method="GET">
+    <form style="text-align: center; align-items: center; justify-content: center;" action='/linear_regression'
+          method="GET">
         <h2>Ведите категорию:</h2>
         <br>
         <select class="form-select" id="select" style="width: 400px; margin-left: 450px" name="select_category">
-          <option selected>Open this select menu</option>
-<!--          <option value="774.667474">Beauty</option>
-          <option value="10515.385267">Electronics</option>
-          <option value="698.287078">Fashion</option>
-          <option value="538.170048">Groceries</option>
-          <option value="1181.128744">Home & Kitchen</option>
-          <option value="9395.857143">Jewellery</option>-->
-
-           <option value="10733">Beauty</option>
-          <option value="19018">Electronics</option>
-          <option value="26087">Fashion</option>
-          <option value="46043">Groceries</option>
-          <option value="60329">Home & Kitchen</option>
-          <option value="70">Jewellery</option>
+            <option selected value="Beauty">Beauty</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Home & Kitchen">Home & Kitchen</option>
+            <option value="Jewellery">Jewellery</option>
         </select>
         <br>
-        <button class="btn btn-primary" type="submit" >Прогнозировать цену</button>
+        <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
     </form>
-        <br>
+    <br>
     <form action='/scatter_plot' method="GET">
-        <button class="btn btn-primary" type="submit" >График</button>
+        <button class="btn btn-primary" type="submit">График</button>
     </form>
 </div>
 </body>

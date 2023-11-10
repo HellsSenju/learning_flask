@@ -8,23 +8,24 @@ from sklearn.linear_model import LinearRegression
 
 app = Flask(__name__)
 
-#  Зависимость цены от категории
+#  Задание: Зависимость цены от категории
+
 dictionary_mean = {
-    774.667474: 'Beauty',
-    10515.385267: 'Electronics',
-    698.287078: 'Fashion',
-    538.170048: 'Groceries',
-    1181.128744: 'Home & Kitchen',
-    9395.857143: 'Jewellery'
+    'Beauty': 774.667474,
+    'Electronics': 10515.385267,
+    'Fashion': 698.287078,
+    'Groceries': 538.170048,
+    'Home & Kitchen': 1181.128744,
+    'Jewellery': 9395.857143
 }
 
 dictionary_count = {
-    60329: 'Home & Kitchen',
-    46043: 'Groceries',
-    26087: 'Fashion',
-    19018: 'Electronics',
-    10733: 'Beauty',
-    70: 'Jewellery'
+    'Beauty': 60329,
+    'Electronics': 46043,
+    'Fashion': 26087,
+    'Groceries': 19018,
+    'Home & Kitchen': 10733,
+    'Jewellery': 70
 }
 
 data = pd.read_csv('csv_files/csv_encoded.csv', sep=',')
@@ -50,7 +51,7 @@ def encoding():
     df = pd.read_csv('csv_files/jio_mart_items.csv', sep=',')
     df.dropna(inplace=True)
 
-    df['category_mean_price'] = df['category'].map(df.groupby('category')['price'].mean().round())
+    df['category_mean_price'] = df['category'].map(df.groupby('category')['price'].mean())
     df['category_count_price'] = df['category_mean_price']
 
     df['category_count_price'].where(~(df['category'] == 'Home & Kitchen'), other=60329, inplace=True)
@@ -60,10 +61,9 @@ def encoding():
     df['category_count_price'].where(~(df['category'] == 'Electronics'), other=19018, inplace=True)
     df['category_count_price'].where(~(df['category'] == 'Beauty'), other=10733, inplace=True)
 
+    # df['price'] = (df['price'] - df['price'].mean()) / df['price'].std()
+
     df.to_csv('csv_files/csv_encoded.csv', index=False)
-
-
-# encoding()
 
 
 def linear_regression_2():
@@ -86,11 +86,11 @@ def home():
 
 @app.route('/linear_regression', methods=['GET'])
 def linear_regression():
-    value = int(request.args['select_category'])
-    y_pred = b0 + b1 * value
+    category = str(request.args['select_category'])
+    y_pred = b0 + b1 * dictionary_mean[category]
     # print('predicted response1:', y_pred, sep='\n')
     return render_template("lab5_lr.html",
-                           category=dictionary_count[value],
+                           category=category,
                            price=y_pred)
 
 
@@ -124,4 +124,5 @@ def scatter_plot():
 
 
 if __name__ == '__main__':
+    # encoding()
     app.run(debug=True, threaded=True)
