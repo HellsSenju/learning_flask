@@ -37,14 +37,14 @@ x = data['category_count_price']
 y = data['price']
 
 xy = x * y
-xx = x * x
+xx = x * x  # x^2
 sumX = x.sum()
 sumY = y.sum()
 sumXY = xy.sum()
 sumXX = xx.sum()
 n = data.shape[0]
-b1 = (sumXY - (sumY * sumX) / n) / (sumXX - sumX * sumX / n)
-b0 = (sumY - b1 * sumX) / n
+b0 = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX**2)
+b1 = (n * sumXY - sumX * sumY) / (n * sumXX - sumX**2)
 
 
 def encoding():
