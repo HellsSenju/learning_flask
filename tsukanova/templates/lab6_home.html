@@ -15,29 +15,15 @@
     <form action='/predict' method="GET">
         <h2>Выберите категорию и подкатегорию: </h2>
         <select class="form-select" id="category" style="width: 400px; margin-left: 450px" name="select_category">
-            <option selected value="Beauty">Beauty</option>
-            <option value="Electronics">Electronics</option>
-            <option value="Fashion">Fashion</option>
-            <option value="Groceries">Groceries</option>
-            <option value="Home & Kitchen">Home & Kitchen</option>
-            <option value="Jewellery">Jewellery</option>
+            {% for item in cat %}
+                <option  value="{{ item }}">{{ item }}</option>
+            {% endfor %}
         </select>
         <br>
         <select class="form-select" id="sub_category" style="width: 400px; margin-left: 450px" name="select_sub_category">
-            <option selected value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
-            <option  value=""></option>
+            {% for item in sub_cat %}
+                <option  value="{{ item }}">{{ item }}</option>
+            {% endfor %}
         </select>
         <br>
         <button class="btn btn-primary" type="submit">Прогнозировать цену</button>

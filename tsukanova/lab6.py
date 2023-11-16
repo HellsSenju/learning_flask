@@ -1,7 +1,6 @@
 from flask import Flask, request, render_template, Response
 from sklearn import tree
 import pandas as pd
-import csv
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
@@ -13,21 +12,30 @@ df.dropna(inplace=True)
 
 x = df.reset_index().iloc[:, 7:]
 y = df.reset_index().iloc[:, 6:7]
-# print(y)
 model = tree.DecisionTreeClassifier(criterion="entropy")
 model = model.fit(x.values, y)
-# print('predict: ', model.predict([[538, 82]]))
 
 
 @app.route('/')
 def home():
-    return render_template("lab6_home.html")
+    return render_template("lab6_home.html",
+                           sub_cat=df['sub_category'].drop_duplicates().tolist(),
+                           cat=df['category'].drop_duplicates().tolist())
 
 
 @app.route('/predict',  methods=['GET'])
 def predict():
+    category = request.args['select_category']
+    sub_category = request.args['select_sub_category']
 
-    return render_template("lab6_predict.html")
+    category_mean_price = df[df['category'] == category]["category_mean_price"].drop_duplicates().values[0]
+    sub_cat_mean_price = df[df['sub_category'] == sub_category]["sub_cat_mean_price"].drop_duplicates().values[0]
+
+    predicted = model.predict([[category_mean_price, sub_cat_mean_price]])
+    return render_template("lab6_predict.html",
+                           category=category,
+                           sub_category=sub_category,
+                           price=predicted[0])
 
 
 @app.route('/show_tree')
