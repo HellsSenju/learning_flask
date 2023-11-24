@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 import math
+from binarytree import tree as Tree, Node
+
 
 app = Flask('__name__')
 

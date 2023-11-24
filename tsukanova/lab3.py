@@ -1,9 +1,9 @@
-from flask import Flask, render_template
-import pandas as pd
 import random
-import numpy as np
-from pandas import DataFrame
+
 import matplotlib.pyplot as plt
+import pandas as pd
+from flask import Flask, render_template
+from pandas import DataFrame
 
 app = Flask(__name__)
 
@@ -62,6 +62,7 @@ def new_csv():
 
     data.to_csv('updated.csv', index=False)
 
+
 # new_csv()
 
 
@@ -98,12 +99,11 @@ def home():
                       old=pd.read_csv('csv_files/jio_mart_items.csv').shape[0],
                       new=pd.read_csv('csv_files/updated.csv').shape[0],
                       table_head=data.head(5).to_html(
-                        classes='table-sm table align-middle table-bordered',
-                        justify='center'),
+                          classes='table-sm table align-middle table-bordered',
+                          justify='center'),
                       table_tail=data.tail(5).to_html(
-                        classes='table-sm table align-middle table-bordered',
-                        justify='center'))
-
+                          classes='table-sm table align-middle table-bordered',
+                          justify='center'))
 
 # if __name__ == '__main__':
 #     app.run(debug=True, threaded=True)

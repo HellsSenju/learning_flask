@@ -1,5 +1,5 @@
-from flask import Flask, render_template
 import pandas as pd
+from flask import Flask, render_template
 
 app = Flask(__name__)
 # data = pd.read_csv('updated.csv')

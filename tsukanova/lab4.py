@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request
 import pandas as pd
-from bloomFilter import BloomFilter
+from flask import Flask, render_template, request
 from pandas import DataFrame
+
+from bloomFilter import BloomFilter
 
 app = Flask(__name__)
 
@@ -46,8 +47,8 @@ def bloom_filter():
         if not res.empty:
             return render_template("lab4.html", keyword=keyword) \
                 + html.format(table=res.to_html(
-                            classes='table table-sm table-striped align-middle table-bordered',
-                            justify='center'))
+                    classes='table table-sm table-striped align-middle table-bordered',
+                    justify='center'))
 
     else:
         return render_template("not_found.html", keyword=keyword)

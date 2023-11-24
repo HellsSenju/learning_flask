@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request
-import pandas as pd
+import base64
+from io import BytesIO
+
 import matplotlib.pyplot as plt
 import numpy as np
-from io import BytesIO
-import base64
+import pandas as pd
+from flask import Flask, render_template, request
 from sklearn.linear_model import LinearRegression
 
 app = Flask(__name__)
@@ -43,8 +44,8 @@ sumY = y.sum()
 sumXY = xy.sum()
 sumXX = xx.sum()
 n = data.shape[0]
-b0 = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX**2)
-b1 = (n * sumXY - sumX * sumY) / (n * sumXX - sumX**2)
+b0 = (sumY * sumXX - sumX * sumXY) / (n * sumXX - sumX ** 2)
+b1 = (n * sumXY - sumX * sumY) / (n * sumXX - sumX ** 2)
 
 
 def encoding():
