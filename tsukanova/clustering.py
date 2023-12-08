@@ -7,16 +7,21 @@ class Clustering:
         self.centroids = None
         self.k = k
 
-    def do(self, data):
+    def fit(self, data):
         # выбираются центроиды
         self.centroids = [random.choice(data)]
         for i in range(self.k - 1):
             self.centroids += [random.choice(data)]
 
-        print(self.centroids)
         clusters = [[] for i in range(self.k)]
         prev_centroids = None
+
+        i = 0
+        # нахождение новых центроидов
         while np.not_equal(self.centroids, prev_centroids).any():
+            if i == 300:
+                raise Exception("Превышено количество итераций")
+
             for item in data:
                 # расстояния от точки до каждого центроида
                 d = np.sqrt(np.sum((item - self.centroids)**2, axis=1))
@@ -31,16 +36,14 @@ class Clustering:
             for i, centroid in enumerate(self.centroids):
                 if np.isnan(centroid).any():
                     self.centroids[i] = prev_centroids[i]
+            i += 1
 
-    def adds(self, data):
-        centroids = []
-        centroid_id = []
+    def predict(self, data):
+        result = []
 
         for item in data:
             d = np.sqrt(np.sum((item - self.centroids) ** 2, axis=1))
-            centroid_id = np.argmin(d)
-            centroids.append(self.centroids[centroid_id])
-            centroid_id.append(centroid_id)
+            result.append(np.argmin(d))
 
-        return centroids, centroid_id
+        return result
 

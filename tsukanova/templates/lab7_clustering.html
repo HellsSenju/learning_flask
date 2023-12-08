@@ -12,9 +12,13 @@
 </head>
 <body>
     <form action='/' method=get>
-        <h2>График кластеризации "цена закрытия — объём" методом k-средних</h2>
+        <h2>График кластеризации "цена - категория" методом k-средних</h2>
+        <h4>Моя реализация: </h4>
         <img src="data:image/png;base64, {{before}}">
         <img src="data:image/png;base64, {{after}}">
+        <br>
+        <h4>Библиотечная: </h4>
+        <img src="data:image/png;base64, {{lib}}">
         <button class="btn btn-primary" type="submit">На главную</button>
     </form>
 </body>
