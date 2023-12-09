@@ -15,9 +15,12 @@
     <form action='/' method="get">
         <h1>Дерево решений</h1>
         <h2>Зависимость цены от категории и подкатегории</h2>
-        <h2>Оценка модели: {{score}} (средняя точность по заданным тестовым данным и меткам)</h2><br>
-        <img src="data:image/png;base64, {{encoded}}">
         <button class="btn btn-primary" type="submit">На главную</button>
+        <br>
+        {% for result in results %}
+            <p>{{ result }}</p>
+        {% endfor %}
+        <br>
     </form>
 </div>
 </body>

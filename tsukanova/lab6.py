@@ -1,12 +1,6 @@
 from flask import Flask, request, render_template
-from sklearn import tree
 import pandas as pd
-import matplotlib.pyplot as plt
-from io import BytesIO
-import base64
 import math
-from binarytree import tree as Tree, Node
-
 
 app = Flask('__name__')
 
@@ -14,37 +8,84 @@ df = pd.read_csv('csv_files/for_tree_1.csv')
 df.dropna(inplace=True)
 df.drop_duplicates(subset=['price'], inplace=True)
 
-x = df.reset_index().iloc[:20, 7:]
-y = df.reset_index().iloc[:20, 6:7]
+
+def get_entropy(data):
+    entropy = 0
+    values = data.value_counts()
+
+    for value_count in values:
+        p = value_count / len(data)
+        entropy -= p * math.log2(p)
+
+    return entropy
 
 
-def entropy(_list: list, col: str):
-    entropy_ = 0
-    for i in categories_list:
-        kol = len(df[df[col] == i])
-        p = kol / len(df)
-        entropy_ += p * math.log(p, 2)
+def get_best_attribute(data, attributes):
+    entropies = {}
 
-    return -entropy_
+    for attribute in attributes:
+        attribute_entropy = get_entropy(data[attribute])
+        entropies[attribute] = attribute_entropy
+
+    best_attribute = min(entropies, key=entropies.get)
+    return best_attribute
 
 
-categories_list = df['category'].drop_duplicates().tolist()
-categories_entropy = entropy(categories_list, 'category')  # энтропия для столбца "категории"
+def build_decision_tree(data, target_column, attributes):
+    # одно уникальное
+    if len(data[target_column].unique()) == 1:
+        return data[target_column].iloc[0]
 
-sub_categories_list = df['sub_category'].drop_duplicates().tolist()
-sub_categories_entropy = entropy(categories_list, 'category')  # энтропия для столбца "подкатегории"
+    # больше нет атрибутов
+    if len(attributes) == 0:
+        return data[target_column].mode().iloc[0]
 
-# for i in categories_list:
-#     kol = len(df[df['category'] == i])
-#     p = kol / len(df)
-#     categories_entropy += p * math.log(p, 2)
-#
-# categories_entropy = -categories_entropy
-# print(categories_entropy)
+    # атрибут с наименьшей энтропией
+    best_attribute = get_best_attribute(data, attributes)
+    # оставшиеся атрибуты
+    remaining_attributes = [attr for attr in attributes if attr != best_attribute]
 
-print(x.values)
-model = tree.DecisionTreeClassifier(criterion="entropy")
-model = model.fit(x, y)
+    tree = {best_attribute: {}}
+
+    for value in data[best_attribute].unique():
+        subset = data[data[best_attribute] == value]
+        if len(subset) == 0:
+            tree[best_attribute][value] = data[target_column].mode().iloc[0]
+        else:
+            tree[best_attribute][value] = build_decision_tree(subset, target_column, remaining_attributes)
+
+    return tree
+
+
+def predict(tree, row, target):
+    # если tree не dictionary
+    if not isinstance(tree, dict):
+        return tree
+    else:
+        attribute = list(tree.keys())[0]
+        value = row.get(attribute)
+        subtree = tree[attribute].get(value, target)
+        return predict(subtree, row, target)
+
+
+def predict_one(tree, attributes, targets):
+    if not isinstance(tree, dict):
+        return tree
+
+    if len(tree.keys()) == 1:
+        attr = attributes[0]
+        tree = tree[attr]
+        attributes.remove(attr)
+
+    target = targets[0]
+    targets.remove(target)
+    tree = tree[target]
+    return predict_one(tree, attributes, targets)
+
+
+_attributes = ['category', 'sub_category']
+_target_column = 'price'
+decision_tree = build_decision_tree(df, _target_column, _attributes)
 
 
 @app.route('/')
@@ -64,66 +105,49 @@ def home():
 
 
 @app.route('/predict', methods=['GET'])
-def predict():
-    category_mean_price = 0
-    sub_cat_mean_price = 0
-
+def prediction():
+    category = ""
+    sub_category = ""
     if request.args['sub_groceries'] is not None:
-        sub_groceries = request.args['sub_groceries']
-        category_mean_price = df[df['category'] == 'Groceries']["category_mean_price"].drop_duplicates().values[0]
-        sub_cat_mean_price = df[df['sub_category'] == sub_groceries]["sub_cat_mean_price"].drop_duplicates().values[0]
+        category = "Groceries"
+        sub_category = request.args['sub_groceries']
 
     elif request.args['sub_fashion'] is not None:
-        sub_fashion = request.args['sub_fashion']
-        category_mean_price = df[df['category'] == 'Fashion']["category_mean_price"].drop_duplicates().values[0]
-        sub_cat_mean_price = df[df['sub_category'] == sub_fashion]["sub_cat_mean_price"].drop_duplicates().values[0]
+        category = "Fashion"
+        sub_category = request.args['sub_fashion']
 
     elif request.args['sub_beauty'] is not None:
-        sub_beauty = request.args['sub_beauty']
-        category_mean_price = df[df['category'] == 'Beauty']["category_mean_price"].drop_duplicates().values[0]
-        sub_cat_mean_price = df[df['sub_category'] == sub_beauty]["sub_cat_mean_price"].drop_duplicates().values[0]
+        category = "Beauty"
+        sub_category = request.args['sub_beauty']
 
     elif request.args['sub_jewellery'] is not None:
-        sub_jewellery = request.args['sub_jewellery']
-        category_mean_price = df[df['category'] == 'Jewellery']["category_mean_price"].drop_duplicates().values[0]
-        sub_cat_mean_price = df[df['sub_category'] == sub_jewellery]["sub_cat_mean_price"].drop_duplicates().values[0]
+        category = "Jewellery"
+        sub_category = request.args['sub_jewellery']
 
-    if category_mean_price == 0 & sub_cat_mean_price == 0:
-        return
+    if category == "" and sub_category == "":
+        print("1")
+        return render_template("not_found.html")
 
-    predicted = model.predict([[category_mean_price, sub_cat_mean_price]])
-    return render_template("lab6_predict.html",
-                           price=predicted[0])
+    if decision_tree is None:
+        print("2")
+        return render_template("not_found.html")
+
+    print(category)
+    print(sub_category)
+    return render_template('lab6_predict.html',
+                           category=category,
+                           sub_category=sub_category,
+                           price=predict_one(decision_tree, _attributes.copy(), [category, sub_category]))
 
 
 @app.route('/show_tree')
 def show_tree():
-    plt.figure(figsize=(40, 40))
-    tree.plot_tree(model)
+    results = []
+    for index, row in df.iterrows():
+        _predict = predict(decision_tree, row, df['price'].mode().iloc[0])
+        results.append(f"Actual: {row[_target_column]}, Predicted: {_predict}")
 
-    # plt.savefig('./plots/tree_2.png')
-
-    file = BytesIO()  # создание временного файла
-    plt.savefig(file, format='png')
-    encoded = base64.b64encode(file.getvalue()).decode('utf-8')  # кодирование
-    return render_template("lab6_tree.html", encoded=encoded, score=model.score(x, y).round(2))
-
-
-@app.route('/fit')
-def fit():
-    srez = df.drop_duplicates(subset=['price'])
-    srez = srez.iloc[:20, :]
-    srez = srez.drop(['href'], axis=1)
-    srez['predict'] = 1
-    result = 0
-
-    for index, row in srez[:].iterrows():
-        row.predict = model.predict([[row.category_mean_price, row.sub_cat_mean_price]])[0]
-        if row.predict == row.price:
-            result += 1
-
-    return render_template("lab6_fit.html",
-                           result=(result / 20) * 100)
+    return render_template('lab6_tree.html', results=results)
 
 
 def new_data_set():

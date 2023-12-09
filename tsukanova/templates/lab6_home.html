@@ -12,97 +12,90 @@
 </head>
 <body>
 
-<form action='/predict' method="GET">
+
     <div class="container-fluid">
-        <div class="row">
 
-            <div style="text-align: center" class="col border">
-                <h4>Категория: Groceries</h4>
-                <h5>Выберите подкатегорию: </h5>
+            <form action='/predict' method="GET">
+                <div style="text-align: center" class="col border">
+                    <h4>Категория: Groceries</h4>
+                    <h5>Выберите подкатегорию: </h5>
 
-                <select class="form-select" id="sub_groceries" name="sub_groceries">
-                    {% for item in sub_groceries %}
-                    <option value="{{ item }}">{{ item }}</option>
-                    {% endfor %}
-                </select>
-                <br>
-                <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
-                <br>
-            </div>
+                    <select class="form-select" id="sub_groceries" name="sub_groceries">
+                        {% for item in sub_groceries %}
+                        <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
+                    <br>
+                    <br>
+                </div>
+            </form>
+                                <br>
+                    <br>
+            <form action='/predict' method="GET">
+                <div style="text-align: center" class="col border">
+                    <h4>Категория: Fashion</h4>
+                    <h5>Выберите подкатегорию: </h5>
 
-            <div style="text-align: center" class="col border">
-                <h4>Категория: Fashion</h4>
-                <h5>Выберите подкатегорию: </h5>
-
-                <select class="form-select" id="sub_fashion" name="sub_fashion">
-                    {% for item in sub_fashion %}
-                    <option value="{{ item }}">{{ item }}</option>
-                    {% endfor %}
-                </select>
-                <br>
-                <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
-                <br>
-            </div>
-
-            <div style="text-align: center" class="col border">
-                <h4>Категория: Beauty</h4>
-                <h5>Выберите подкатегорию: </h5>
-
-                <select class="form-select" id="sub_beauty" name="sub_beauty">
-                    {% for item in sub_beauty %}
-                    <option value="{{ item }}">{{ item }}</option>
-                    {% endfor %}
-                </select>
-                <br>
-                <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
-                <br>
-                <br>
-
-            </div>
+                    <select class="form-select" id="sub_fashion" name="sub_fashion">
+                        {% for item in sub_fashion %}
+                        <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
+                    <br>
+                    <br>
+                </div>
+            </form>
+                    <br>
+                    <br>
 
 
-            <div style="text-align: center" class="col border">
-                <h4>Категория: Jewellery</h4>
-                <h5>Выберите подкатегорию: </h5>
+            <form action='/predict' method="GET">
+                <div style="text-align: center" class="col border">
+                    <h4>Категория: Beauty</h4>
+                    <h5>Выберите подкатегорию: </h5>
 
-                <select class="form-select" id="sub_jewellery" name="sub_jewellery">
-                    {% for item in sub_jewellery %}
-                    <option value="{{ item }}">{{ item }}</option>
-                    {% endfor %}
-                </select>
-                <br>
-                <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
-                <br>
-            </div>
-        </div>
+                    <select class="form-select" id="sub_beauty" name="sub_beauty">
+                        {% for item in sub_beauty %}
+                        <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
+                    <br>
+                    <br>
+                </div>
+            </form>
+                            <br>
+                    <br>
+            <form action='/predict' method="GET">
+                <div style="text-align: center" class="col border">
+                    <h4>Категория: Jewellery</h4>
+                    <h5>Выберите подкатегорию: </h5>
+
+                    <select class="form-select" id="sub_jewellery" name="sub_jewellery">
+                        {% for item in sub_jewellery %}
+                        <option value="{{ item }}">{{ item }}</option>
+                        {% endfor %}
+                    </select>
+                    <br>
+                    <button class="btn btn-primary" type="submit">Прогнозировать цену</button>
+                    <br>
+                    <br>
+                </div>
+            </form>
     </div>
-</form>
 
 <div style="text-align: center" class="container text-center mt-4 align-items-center justify-content-center">
-    <!--    <form action='/predict' method="GET">-->
-    <!--        <h2>Выберите категорию и подкатегорию: </h2>-->
-    <!--        <select class="form-select" id="category" style="width: 400px; margin-left: 450px" name="select_category">-->
-    <!--            {% for item in cat %}-->
-    <!--                <option  value="{{ item }}">{{ item }}</option>-->
-    <!--            {% endfor %}-->
-    <!--        </select>-->
-    <!--        <br>-->
-    <!--        <select class="form-select" id="sub_category" style="width: 400px; margin-left: 450px" name="select_sub_category">-->
-    <!--            {% for item in sub_cat %}-->
-    <!--                <option  value="{{ item }}">{{ item }}</option>-->
-    <!--            {% endfor %}-->
-    <!--        </select>-->
-    <!--        <br>-->
-    <!--        <button class="btn btn-primary" type="submit">Прогнозировать цену</button>-->
-    <!--    </form>-->
+
     <br>
     <form action='/show_tree' method="GET">
         <button class="btn btn-primary" type="submit">Дерево решений</button>
     </form>
     <br>
-    <form action='/fit' method="get">
-        <button class="btn btn-primary" type="submit">Вывод</button>
-    </form>
 </div>
 </body>
 </html>
