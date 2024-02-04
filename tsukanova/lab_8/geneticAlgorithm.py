@@ -1,27 +1,6 @@
-from collections import namedtuple
-from random import choices, randint
+from random import  randint
 from math import sqrt
-
-# белки - b, жиры - g, углеводы - y
-_b = 70  # норма
-_g = 45  # норма
-_y = 100  # норма
-_kkal = 750  # норма
-
-Product = namedtuple('Product', ['name', 'b', 'g', 'y', 'kkal'])
-
-products = [
-    Product('Свинина', 12, 50, 0, 480),
-    Product('Говядина', 19, 13, 0, 190),
-    Product('Баранина', 16, 15, 0, 200),
-    Product('Телятина', 20, 1, 0, 90),
-    Product('Кролик', 21, 13, 0, 197),
-    Product('Курица', 21, 8, 0.8, 160),
-    Product('Индейка', 22, 12, 0.6, 190),
-    Product('Цыплята', 19, 8, 0.5, 160),
-    Product('Утки', 16, 61, 0, 350),
-    Product('Гуси', 16, 33, 0, 360)
-]
+from lab8 import products, _b, _g, _y, _kkal
 
 
 def crossover(_population: []) -> []:
@@ -50,10 +29,8 @@ def crossover(_population: []) -> []:
 
 
 def get_variant_properties(variant: []):
-    b = 0
-    g = 0
-    y = 0
-    kkal = 0
+    b, g, y, kkal = 0, 0, 0, 0
+
     for i in range(len(variant)):
         if variant[i] == 1:
             b += products[i].b
@@ -92,26 +69,4 @@ def genetic_algorithm(_population: []):
         new_population.append(population_after_crossover[el])
 
     return new_population, selected
-
-
-# популяция - пространство гипотез
-population = []
-# заполнение популяции
-for i in range(50):
-    population.append(choices([0, 1], k=len(products)))
-
-print("population", population)
-
-# функция приспособленности - корень из суммы квадратов
-f = []
-
-for i in range(15):
-    population, f = genetic_algorithm(population)
-
-res = [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:1]]
-print("res", population[res[0]])
-print("b, g, y, kkal", get_variant_properties(population[res[0]]))
-print(f"норма b, g, y, kkal - {_b}, {_g}, {_y}, {_kkal}")
-
-
 
