@@ -1,6 +1,6 @@
-from random import  randint
+from random import randint, choices
 from math import sqrt
-from lab8 import products, _b, _g, _y, _kkal
+from models import products, _b, _g, _y, _kkal
 
 
 def crossover(_population: []) -> []:
@@ -41,32 +41,57 @@ def get_variant_properties(variant: []):
     return b, g, y, kkal
 
 
+def get_ration(variant: []):
+    res = 'Рацион: '
+    for i in range(len(variant)):
+        if variant[i] == 1:
+            res += products[i].name + '  '
+
+    return res
+
+
 def selection(_population: []) -> []:
     f = []
     for variant in _population:
         b, g, y, kkal = get_variant_properties(variant)
-
-        # квадраты разницы полученных значений с нормой
-        b_difference = (b - _b) ** 2
-        g_difference = (g - _g) ** 2
-        y_difference = (y - _y) ** 2
-        kkal_difference = (kkal - _kkal) ** 2
-
-        f.append(sqrt(b_difference + g_difference + y_difference + kkal_difference))
+        f.append(abs(b - _b) + abs(g - _g) + abs(y - _y) + abs(kkal - _kkal))
 
     return [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:len(_population)]]
+
+
+def mutation(_population: []) -> []:
+    for variant in _population:
+        k = randint(0, int(len(variant)/3))
+        indexes = []
+        while k >= 0:
+            index = randint(0, len(variant) - 1)
+            while indexes.__contains__(index):
+                index = randint(0, len(variant) - 1)
+
+            indexes.append(index)
+
+            if variant[index] == 1:
+                variant[index] = 0
+            else:
+                variant[index] = 1
+
+            k -= 1
+
+    return _population
 
 
 def genetic_algorithm(_population: []):
     # скрещивание
     population_after_crossover = crossover(_population)
 
-    # отбор
-    selected = selection(population_after_crossover)
+    population_after_mutation = mutation(population_after_crossover)
+
+    # отбор (возвращает индексы отобранных вариантов)
+    selected = selection(population_after_mutation)
 
     new_population = []
     for el in selected:
-        new_population.append(population_after_crossover[el])
+        new_population.append(population_after_mutation[el])
 
     return new_population, selected
 
