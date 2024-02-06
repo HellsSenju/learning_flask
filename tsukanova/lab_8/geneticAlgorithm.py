@@ -75,7 +75,7 @@ def selection(_population: []) -> []:
     f = []
     for variant in _population:
         b, g, y, kkal = get_variant_properties(variant)
-        f.append(abs(b - _b) + abs(g - _g) + abs(y - _y) + abs(kkal - _kkal))
+        f.append(sqrt((b - _b)**2 + (g - _g)**2 + (y - _y)**2 + (kkal - _kkal)**2))
 
     return [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:len(_population/2)]]
 
