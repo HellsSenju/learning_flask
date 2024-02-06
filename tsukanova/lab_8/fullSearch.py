@@ -1,6 +1,6 @@
 from models import products, B, G, Y, Kkal, Price
 import models as models
-from geneticAlgorithm import get_variant_properties
+from geneticAlgorithm import get_variant_properties, get_ration, fitness_function
 from math import sqrt
 
 
@@ -44,10 +44,11 @@ def full_search():
                 price += products[index].price
 
         f = sqrt((b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2)
-        if f < min_f and check(b, g, y, kkal, price):
+        if f < min_f and price <= Price:
             min_f = f
             best_variant = variant
 
         k += 1
-    b, g, y, kkal = get_variant_properties(best_variant)
-    return best_variant, b, g, y, kkal
+
+    print("Результат полного перебора:")
+    print(f'{get_ration(best_variant)}, f = {fitness_function(best_variant)}')

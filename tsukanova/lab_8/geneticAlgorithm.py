@@ -1,9 +1,30 @@
 from random import randint, choices
 from math import sqrt
 from models import products, B, G, Y, Kkal
+import models
 
 
-def crossover(_population: []) -> []:
+def mutation_variant(variant: list[int]) -> list[int]:
+    k = randint(0, int(len(variant) / 3))
+    indexes = []
+    while k > 0:
+        index = randint(0, len(variant) - 1)
+        while indexes.__contains__(index):
+            index = randint(0, len(variant) - 1)
+
+        indexes.append(index)
+
+        if variant[index] == 1:
+            variant[index] = 0
+        else:
+            variant[index] = 1
+
+        k -= 1
+
+    return variant
+
+
+def crossover(_population: list) -> list:
     population_size = len(_population)
 
     for i in range(population_size):
@@ -32,25 +53,7 @@ def crossover(_population: []) -> []:
     return _population
 
 
-def mutation_variant(variant: []) -> []:
-    k = randint(0, int(len(variant) / 3))
-    indexes = []
-    while k > 0:
-        index = randint(0, len(variant) - 1)
-        while indexes.__contains__(index):
-            index = randint(0, len(variant) - 1)
-
-        indexes.append(index)
-
-        if variant[index] == 1:
-            variant[index] = 0
-        else:
-            variant[index] = 1
-
-        k -= 1
-
-
-def get_variant_properties(variant: []) -> object:
+def get_variant_properties(variant: list[int]):
     b, g, y, kkal, price = 0, 0, 0, 0, 0
 
     for i in range(len(variant)):
@@ -64,7 +67,7 @@ def get_variant_properties(variant: []) -> object:
     return b, g, y, kkal, price
 
 
-def get_ration(variant: []):
+def get_ration(variant: list[int]):
     res = 'Рацион: '
     for i in range(len(variant)):
         if variant[i] == 1:
@@ -73,45 +76,66 @@ def get_ration(variant: []):
     return res
 
 
-def selection(_population: []) -> []:
+def fitness_function(variant: list[int]):
+    b, g, y, kkal, price = get_variant_properties(variant)
+    if price <= models.Price:
+        return sqrt((b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2)
+    else:
+        return 10000000
+
+
+def selection(_population: list):
     f = []
     for variant in _population:
-        b, g, y, kkal, price = get_variant_properties(variant)
-        f.append(sqrt((b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2))
+        f.append(fitness_function(variant))
 
     new_population = []
-    for el in [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:len(_population/2)]]:
+    for el in [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:int(len(_population)/2)]]:
         new_population.append(_population[el])
 
-    return new_population
+    index_of_best = [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:1]][0]
+    return new_population, _population[index_of_best], f[index_of_best]
 
 
-def mutation_population(_population: []) -> []:
+def mutation_population(_population: list) -> list:
     for i in range(len(_population)):
         _population[i] = mutation_variant(_population[i])
 
     return _population
 
 
-def fill_population(population_size: int) -> []:
-    population = []
-    for i in range(population_size):
-        population.append(choices([0, 1], k=len(products)))
+def fill_population(population_size: int) -> list:
+    return [choices([0, 1], k=len(products)) for _ in range(population_size)]
+    # population = []
+    # for i in range(population_size):
+    #     population.append(choices([0, 1], k=len(products)))
+    #
+    # return population
 
-    return population
+
+def print_population(population: list, generation: int):
+    print(f"=======Популяция, {generation} поколения=======")
+    for i in range(len(population)):
+        print(f'[{i + 1}] : {get_ration(population[i])}, f = {fitness_function(population[i])}')
+
+    print("=================================================")
 
 
-def genetic_algorithm(_population: [], population_size: int, generations: int):
+def genetic_algorithm(population_size: int, generations: int):
     population = fill_population(population_size)
-
+    print_population(population, 0)
+    f = 0
+    best_variant = []
     # критерий остановки - кол-во шагов эволюции
     for _ in range(generations):
+        # скрещивание
         population_after_crossover = crossover(population)
-        population = selection(population_after_crossover)
 
-    # скрещивание
-    population_after_crossover = crossover(_population)
+        # отбор (возвращает отобранную популяцию, лучший вариант из нее,
+        # значение функции приспособленности этого варианта)
+        population, best_variant, f_temp = selection(population_after_crossover)
+        print(f_temp)
 
-    # отбор (возвращает индексы отобранных вариантов)
-    population_after_selection = selection(population_after_crossover)
+    print("Результат генетического алгоритма:")
+    print(f'{get_ration(best_variant)}, f = {f}')
 
