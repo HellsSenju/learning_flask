@@ -1,10 +1,11 @@
 from random import randint, choices
 from math import sqrt
-from models import products, _b, _g, _y, _kkal
+from models import products, B, G, Y, Kkal
 
 
 def crossover(_population: []) -> []:
     population_size = len(_population)
+
     for i in range(population_size):
         index_parent_1 = randint(0, population_size - 1)
         parent_1 = _population[index_parent_1]  # Родитель 1
@@ -17,7 +18,7 @@ def crossover(_population: []) -> []:
         child = []
 
         # div = int(len(products) / 2)
-        div = randint(1, len(products) - 3)
+        div = randint(1, len(products) - 1)
         for j in range(0, div):
             child.append(parent_1[j])
 
@@ -49,8 +50,8 @@ def mutation_variant(variant: []) -> []:
         k -= 1
 
 
-def get_variant_properties(variant: []):
-    b, g, y, kkal = 0, 0, 0, 0
+def get_variant_properties(variant: []) -> object:
+    b, g, y, kkal, price = 0, 0, 0, 0, 0
 
     for i in range(len(variant)):
         if variant[i] == 1:
@@ -58,8 +59,9 @@ def get_variant_properties(variant: []):
             g += products[i].g
             y += products[i].y
             kkal += products[i].kkal
+            price += products[i].price
 
-    return b, g, y, kkal
+    return b, g, y, kkal, price
 
 
 def get_ration(variant: []):
@@ -74,10 +76,14 @@ def get_ration(variant: []):
 def selection(_population: []) -> []:
     f = []
     for variant in _population:
-        b, g, y, kkal = get_variant_properties(variant)
-        f.append(sqrt((b - _b)**2 + (g - _g)**2 + (y - _y)**2 + (kkal - _kkal)**2))
+        b, g, y, kkal, price = get_variant_properties(variant)
+        f.append(sqrt((b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2))
 
-    return [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:len(_population/2)]]
+    new_population = []
+    for el in [x[0] for x in sorted(enumerate(f), key=lambda x: x[1])[:len(_population/2)]]:
+        new_population.append(_population[el])
+
+    return new_population
 
 
 def mutation_population(_population: []) -> []:
@@ -87,17 +93,25 @@ def mutation_population(_population: []) -> []:
     return _population
 
 
-def genetic_algorithm(_population: []):
+def fill_population(population_size: int) -> []:
+    population = []
+    for i in range(population_size):
+        population.append(choices([0, 1], k=len(products)))
+
+    return population
+
+
+def genetic_algorithm(_population: [], population_size: int, generations: int):
+    population = fill_population(population_size)
+
+    # критерий остановки - кол-во шагов эволюции
+    for _ in range(generations):
+        population_after_crossover = crossover(population)
+        population = selection(population_after_crossover)
+
     # скрещивание
     population_after_crossover = crossover(_population)
 
-
     # отбор (возвращает индексы отобранных вариантов)
-    selected = selection(population_after_crossover)
-
-    new_population = []
-    for el in selected:
-        new_population.append(population_after_crossover[el])
-
-    return new_population, selected
+    population_after_selection = selection(population_after_crossover)
 
