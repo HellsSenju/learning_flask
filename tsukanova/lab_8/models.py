@@ -22,7 +22,7 @@ products = [
     Product('Product 5', 21, 13, 2, 105, 780),
     Product('Product 6', 21, 8, 50, 94, 900),
     Product('Product 7', 40, 12, 33, 309, 150),
-    # Product('Product 8', 34, 8, 25, 50),
-    # Product('Product 9', 30, 61, 11, 159),
-    # Product('Product 10', 41, 33, 6, 120)
+    Product('Product 8', 54, 23, 26, 50, 120),
+    Product('Product 9', 12, 9, 48, 60, 99),
+    Product('Product 10', 56, 19, 21, 70, 199),
 ]

@@ -133,8 +133,7 @@ def genetic_algorithm(population_size: int, generations: int):
 
         # отбор (возвращает отобранную популяцию, лучший вариант из нее,
         # значение функции приспособленности этого варианта)
-        population, best_variant, f_temp = selection(population_after_crossover)
-        print(f_temp)
+        population, best_variant, f = selection(population_after_crossover)
 
     print("Результат генетического алгоритма:")
     print(f'{get_ration(best_variant)}, f = {f}')

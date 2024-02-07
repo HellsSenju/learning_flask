@@ -28,7 +28,7 @@ def full_search():
     min_f = 1000000
     best_variant = []
     while True:
-        binary = f'{k:07b}'
+        binary = f'{k:010b}'
         if binary == stop:
             break
 
