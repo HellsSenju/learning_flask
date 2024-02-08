@@ -79,7 +79,7 @@ def get_ration(variant: list[int]):
 def fitness_function(variant: list[int]):
     b, g, y, kkal, price = get_variant_properties(variant)
     if price <= models.Price:
-        return sqrt((b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2)
+        return (b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2
     else:
         return 10000000
 
@@ -123,7 +123,6 @@ def print_population(population: list, generation: int):
 
 def genetic_algorithm(population_size: int, generations: int):
     population = fill_population(population_size)
-    print_population(population, 0)
     f = 0
     best_variant = []
     # критерий остановки - кол-во шагов эволюции

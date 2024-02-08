@@ -43,7 +43,7 @@ def full_search():
                 kkal += products[index].kkal
                 price += products[index].price
 
-        f = sqrt((b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2)
+        f = (b - B) ** 2 + (g - G) ** 2 + (y - Y) ** 2 + (kkal - Kkal) ** 2
         if f < min_f and price <= Price:
             min_f = f
             best_variant = variant
