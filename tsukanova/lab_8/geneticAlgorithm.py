@@ -1,13 +1,13 @@
-from random import randint, choices
+from random import randint, choices, choice
 from math import sqrt
 from models import products, B, G, Y, Kkal
 import models
 
 
 def mutation_variant(variant: list[int]) -> list[int]:
-    k = randint(0, int(len(variant) / 3))
+    k = 0
     indexes = []
-    while k > 0:
+    while k != 3:
         index = randint(0, len(variant) - 1)
         while indexes.__contains__(index):
             index = randint(0, len(variant) - 1)
@@ -19,7 +19,7 @@ def mutation_variant(variant: list[int]) -> list[int]:
         else:
             variant[index] = 1
 
-        k -= 1
+        k += 1
 
     return variant
 
@@ -38,7 +38,6 @@ def crossover(_population: list) -> list:
         parent_2 = _population[index_parent_2]  # Родитель 2
         child = []
 
-        # div = int(len(products) / 2)
         div = randint(1, len(products) - 1)
         for j in range(0, div):
             child.append(parent_1[j])
@@ -46,7 +45,9 @@ def crossover(_population: list) -> list:
         for j in range(div, len(products)):
             child.append(parent_2[j])
 
-        child = mutation_variant(child)
+        # случайная мутация
+        if choice([True, False]):
+            child = mutation_variant(child)
 
         _population.append(child)
 
@@ -106,11 +107,6 @@ def mutation_population(_population: list) -> list:
 
 def fill_population(population_size: int) -> list:
     return [choices([0, 1], k=len(products)) for _ in range(population_size)]
-    # population = []
-    # for i in range(population_size):
-    #     population.append(choices([0, 1], k=len(products)))
-    #
-    # return population
 
 
 def print_population(population: list, generation: int):

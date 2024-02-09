@@ -8,7 +8,7 @@ print()
 print(f"норма b, g, y, kkal - {B}, {G}, {Y}, {Kkal}")
 print()
 
-genetic_algorithm(8, 50)
+genetic_algorithm(8, 400)
 
 print()
 
