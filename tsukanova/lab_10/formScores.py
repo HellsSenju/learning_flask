@@ -76,7 +76,7 @@ class Ui_MainWindow(object):
 "background-color: rgb(182, 241, 143);")
         self.label_5 = QLabel(self.centralwidget)
         self.label_5.setObjectName(u"label_5")
-        self.label_5.setGeometry(QRect(10, 0, 201, 31))
+        self.label_5.setGeometry(QRect(10, 0, 400, 31))
         self.label_5.setFont(font)
         self.pushButton_del = QPushButton(self.centralwidget)
         self.pushButton_del.setObjectName(u"pushButton_del")
@@ -93,46 +93,26 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-
         QMetaObject.connectSlotsByName(MainWindow)
-        self.pushButton_add.clicked.connect(self.add_score)
-        self.pushButton_del.clicked.connect(self.del_score)
+
     # setupUi
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u043e\u0446\u0435\u043d\u043e\u043a", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"\u041d\u0430\u0437\u0432\u0430\u043d\u0438\u0435:", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", "Название", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"a:", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"b:", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"c:", None))
         self.pushButton_add.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u0414\u043e\u0431\u0430\u0432\u043b\u0435\u043d\u0438\u0435 \u043e\u0446\u0435\u043d\u043e\u043a", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", "Добавление оценок (максимум 10):", None))
         self.pushButton_del.setText(QCoreApplication.translate("MainWindow", u"\u0423\u0434\u0430\u043b\u0438\u0442\u044c", None))
         self.pushButton_confirm.setText(QCoreApplication.translate("MainWindow", u"\u041f\u043e\u0434\u0442\u0432\u0435\u0440\u0434\u0438\u0442\u044c \u043e\u0446\u0435\u043d\u043a\u0438", None))
+        self.set_input()
+    # retranslateUi
+
+    def set_input(self):
         # задание значений по умолчанию
         self.lineEdit_name.setText("Оценка_" + str(self.kol))
         self.lineEdit_a.setText("5")
         self.lineEdit_b.setText("10")
         self.lineEdit_c.setText("15")
-    # retranslateUi
-
-    def add_score(self):
-        self.scores.append(Model(self.lineEdit_name.text(),
-                                 int(self.lineEdit_a.text()),
-                                 int(self.lineEdit_b.text()),
-                                 int(self.lineEdit_c.text())
-                                 ))
-        self.listWidget.addItem(
-            f'{self.lineEdit_name.text()} a={self.lineEdit_a.text()}, b={self.lineEdit_b.text()}, c={self.lineEdit_c.text()}')
-
-    def del_score(self):
-        item = self.listWidget.currentItem().text().split()[0]
-        self.scores.remove([i for i in self.scores if i.name == item][0])
-        self.update_list_widget()
-
-    def update_list_widget(self):
-        self.listWidget.clear()
-        for item in self.scores:
-            self.listWidget.addItem(f'{item.name} a={item.a}, b={item.b}, c={item.c}')
-
-

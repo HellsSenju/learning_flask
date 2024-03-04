@@ -19,19 +19,23 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QLabel,
     QSizePolicy, QWidget)
 
 class Ui_Dialog(object):
-    def setupUi(self, Dialog):
+    def setupUi(self, Dialog, pixmap: QPixmap):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(483, 484)
+
+        h_pixmap = pixmap.height()
+        w_pixmap = pixmap.width()
+        Dialog.resize(w_pixmap, h_pixmap)
         self.frame = QFrame(Dialog)
         self.frame.setObjectName(u"frame")
-        self.frame.setGeometry(QRect(0, 0, 481, 481))
+        self.frame.setGeometry(QRect(0, 0, w_pixmap, h_pixmap))
         self.frame.setFrameShape(QFrame.StyledPanel)
         self.frame.setFrameShadow(QFrame.Raised)
         self.label = QLabel(self.frame)
         self.label.setObjectName(u"label")
-        self.label.setGeometry(QRect(10, 10, 461, 461))
-        self.label.setStyleSheet(u"border: 2px solid rgb(0, 0, 0);")
+        self.label.setPixmap(pixmap)
+        self.label.setScaledContents(True)
+        self.label.setGeometry(QRect(0, 0, w_pixmap, h_pixmap))
 
         self.retranslateUi(Dialog)
 

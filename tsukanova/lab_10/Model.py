@@ -6,3 +6,7 @@ class Model:
         self.c = c
         self.set = {}
 
+    def get_props(self) -> list:
+        return [self.a, self.b, self.c]
+
+
