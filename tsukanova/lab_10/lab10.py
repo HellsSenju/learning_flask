@@ -1,4 +1,3 @@
-import skfuzzy as fuzz
 import matplotlib.pyplot as plt
 import numpy as np
 from io import BytesIO
@@ -35,24 +34,19 @@ class Lab10(QMainWindow):
 
 
 if __name__ == '__main__':
-    x_qual = np.arange(0, 100, 1)
+    y = [0, 1, 0]
+    x1 = [15, 30, 45]
+    x2 = [35, 50, 70]
+    x3 = [60, 80, 90]
+    plt.figure(figsize=(12, 7))
+    plt.axis([0, 100, 0, 1])
 
-    lo = fuzz.trimf(x_qual, [15, 30, 45])
-    md = fuzz.trimf(x_qual, [35, 50, 70])
-    hi = fuzz.trimf(x_qual, [60, 80, 90])
+    plt.plot(x1, y, c='r', label='Ниже среднего')
+    plt.plot(x2, y, c='b', label='Средняя')
+    plt.plot(x3, y, c='g', label='Выше среднего')
+    plt.legend()
+    plt.show()
 
-    fig, ax = plt.subplots(nrows=1, figsize=(8, 9))
-    ax.plot(x_qual, lo, 'b', linewidth=1.5, label='Ниже среднего')
-    ax.plot(x_qual, md, 'g', linewidth=1.5, label='Средняя')
-    ax.plot(x_qual, hi, 'r', linewidth=1.5, label='Выше среднего')
-    ax.set_title('Загруженность сервера и сети')
-    ax.legend()
-
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.get_xaxis().tick_bottom()
-    ax.get_yaxis().tick_left()
-    plt.tight_layout()
 
     # app = QApplication(sys.argv)
     # window = Lab10()
