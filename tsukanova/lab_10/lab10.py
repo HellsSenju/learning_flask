@@ -34,7 +34,6 @@ class Lab10(QMainWindow):
                                  ))
         self.ui.listWidget.addItem(
             f'{self.ui.lineEdit_name.text()} a={self.ui.lineEdit_a.text()}, b={self.ui.lineEdit_b.text()}, c={self.ui.lineEdit_c.text()}')
-        print(len(self.scores))
         self.ui.kol += 1
         self.ui.set_input()
 
@@ -99,7 +98,6 @@ class Lab10(QMainWindow):
 
     def closed_dialog(self):
         self.reset_param()
-        print(len(self.scores))
 
 
 if __name__ == '__main__':
