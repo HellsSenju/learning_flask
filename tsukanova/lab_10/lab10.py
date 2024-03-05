@@ -74,14 +74,14 @@ class Lab10(QMainWindow):
         c = 0
         for item in self.scores:
             if item.a < min:
-                min = item.a - 20
+                min = item.a
             if item.c > max:
-                max = item.c + 20
+                max = item.c
 
             plt.plot(item.get_props(), y, color=self.colors[c], label=item.name)
             c += 1
 
-        plt.axis([min, max, 0, 1])
+        plt.axis([min - 10, max + 10, 0, 1])
         plt.title("Оценки загруженности сети")
         plt.xlabel("Загруженность сети")
         plt.ylabel("Степень принадлежности")
