@@ -3,11 +3,9 @@
 
 import pymorphy3
 from math import log
-from nltk import BigramCollocationFinder, BigramAssocMeasures, FreqDist, ConditionalFreqDist, ngrams
+from nltk import ConditionalFreqDist, ngrams
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-from itertools import permutations, chain
-from functools import partial
 
 morph = pymorphy3.MorphAnalyzer()
 
@@ -35,9 +33,7 @@ print(f'кол-во существительных во множественно
 
 # лемматизация (слова в канонической, основной форме)
 lemmatize_tokens = [morph.normal_forms(word)[0] for word in tokens]
-lemmatize_tokens_str = " ".join([word for word in tokens if word not in stop_words])
-
-print(lemmatize_tokens)
+lemmatize_tokens_str = " ".join([morph.normal_forms(word)[0] for word in tokens if word not in stop_words])
 
 bigrams = list(ngrams(lemmatize_tokens_str.split(), 2))
 bigrams_fd = ConditionalFreqDist(bigrams)
