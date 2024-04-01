@@ -33,7 +33,7 @@ print(f'кол-во существительных во множественно
 
 # лемматизация (слова в канонической, основной форме)
 lemmatize_tokens = [morph.normal_forms(word)[0] for word in tokens]
-lemmatize_tokens_str = " ".join([morph.normal_forms(word)[0] for word in tokens if word not in stop_words])
+lemmatize_tokens_str = " ".join(word for word in lemmatize_tokens)
 
 bigrams = list(ngrams(lemmatize_tokens_str.split(), 2))
 bigrams_fd = ConditionalFreqDist(bigrams)
