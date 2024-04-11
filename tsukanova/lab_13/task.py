@@ -3,6 +3,7 @@ from math import log
 from nltk import ConditionalFreqDist, ngrams, FreqDist
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
+import math
 
 morph = pymorphy3.MorphAnalyzer()
 
@@ -57,13 +58,24 @@ lemmatize_tokens_str = " ".join(word for word in lemmatize_tokens)
 bigrams = list(ngrams(lemmatize_tokens_str.split(), 2))
 bigrams_fd = ConditionalFreqDist(bigrams)
 
-fdist = FreqDist()
+fdist = FreqDist(lemmatize_tokens)
 
-kol_words = len(tokens)  # количество слов в тексте
+n = len(lemmatize_tokens)  # количество слов в тексте
+res = ''
 for bigram in bigrams:
     x_y = bigrams_fd[bigram[0]][bigram[1]]  # частотность биграмы
     x = fdist.get(bigram[0])
     y = fdist.get(bigram[1])
+
+    mi = math.log((x_y * n) / (x * y), 2)
+    if 1 < mi:
+        res = 'сочетание статистически значимо'
+    elif 0 < mi < 1:
+        res = 'сочетание статистически незначимо'
+    elif 0 < mi < 1:
+        res = 'каждое из слов встречается лишь в тех позициях, в которых не встречается другое'
+
+    print(f'{bigram[0]} - {bigram[1]} === {res}')
 
 
 
