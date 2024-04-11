@@ -9,6 +9,7 @@ morph = pymorphy3.MorphAnalyzer()
 
 input_text = open('input.txt', 'r', encoding="utf-8")
 # output_text = open('output_without_stop_words.txt', 'w', encoding="utf-8")
+output = open('output.txt', 'w', encoding="utf-8")
 
 text = input_text.read().replace('\n', ' ')
 
@@ -23,6 +24,7 @@ stop_words.extend(['т.д.', '.', ',', '"', '""', ':', ';', '(', ')', '[', ']', 
 tokens = [word for word in tokens if word not in stop_words]
 tokens_str = " ".join(word for word in tokens)
 # output_text.write(tokens_str)
+input_text.close()
 
 # кол-во существительных во единственном числе
 kol = 0
@@ -31,7 +33,7 @@ for word in tokens:
     if 'NOUN' in p.tag and 'sing' in p.tag:
         kol += 1
 
-print(f'кол-во существительных в единственном числе - {kol}')
+output.write(f'кол-во существительных в единственном числе - {kol}' + '\n')
 
 
 Alphabet = ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п",
@@ -48,7 +50,7 @@ for letter, frequency in hits:
     all_chars += frequency
 
 for letter, frequency in hits:
-    print(f'{letter.upper()}, {frequency}, {round(frequency/all_chars, 4) * 100} %')
+    output.write(f'{letter.upper()}, {frequency}, {round(frequency/all_chars, 4) * 100} %' + '\n')
 
 
 # лемматизация (слова в канонической, основной форме)
@@ -75,7 +77,7 @@ for bigram in bigrams:
     elif 0 < mi < 1:
         res = 'каждое из слов встречается лишь в тех позициях, в которых не встречается другое'
 
-    print(f'{bigram[0]} - {bigram[1]} === {res}')
+    output.write(f'{bigram[0]} - {bigram[1]} === {res}' + '\n')
 
-
+output.close()
 
